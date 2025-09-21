@@ -1,61 +1,63 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <a href="https://laravel.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
+  </a>
 </p>
 
-## About Laravel
+# Panel Administrativo con Laravel y Flowbite
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Este proyecto implementa una plantilla base para un panel administrativo en **Laravel**, utilizando componentes **Blade** y la librería de componentes de UI **Flowbite** sobre Tailwind CSS. El objetivo es crear una estructura de layout reutilizable y modular para las vistas protegidas de la aplicación.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Pasos de la Implementación 🚀
 
-## Learning Laravel
+### 1. Creación del Layout (`admin.blade.php`)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Para crear una plantilla base para las vistas del panel administrativo, se siguieron estos pasos:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+* **Generación del Componente**: Se utilizó Artisan para crear un nuevo componente de Blade llamado `AdminLayout` con el siguiente comando:
+    ```bash
+    php artisan make:component AdminLayout
+    ```
+* **Reubicación del Layout**: El archivo de la vista del componente, `admin-layout.blade.php`, fue movido desde `resources/views/components/` a la carpeta `resources/views/layouts/` para una mejor organización de las plantillas. Posteriormente, fue renombrado a `admin.blade.php`.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+* **Actualización de la Clase del Componente**: Se modificó la clase del componente en `app/View/Components/AdminLayout.php` para que el método `render()` apunte a la nueva ubicación del archivo Blade:
+    ```php
+    return view('layouts.admin');
+    ```
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 2. Integración de Flowbite
 
-### Premium Partners
+Para construir la interfaz del panel, se integró la librería Flowbite:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+* **Instalación**: Se añadió Flowbite al proyecto como una dependencia de NPM a través del comando:
+    ```bash
+    npm install flowbite --save
+    ```
+* **Separación de Componentes**: El código HTML del **navbar** (barra de navegación superior) y del **sidebar** (barra lateral) se obtuvo de la documentación oficial de Flowbite. Para mantener el layout principal limpio, estos bloques de código se separaron en archivos individuales:
+    * `resources/views/layouts/includes/admin/navigation.blade.php`
+    * `resources/views/layouts/includes/admin/sidebar.blade.php`
+* **Inclusión en el Layout**: Finalmente, estos componentes se incluyeron en la plantilla `admin.blade.php` utilizando las directivas de Blade, asegurando que aparezcan en todas las páginas que hereden de este layout:
+    ```blade
+    @include('layouts.includes.admin.navigation')
+    @include('layouts.includes.admin.sidebar')
+    ```
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Prueba de `slots` e `includes`
 
-## Code of Conduct
+Se verificó que la estructura modular funcionara correctamente de la siguiente manera:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+* **Uso del Layout**: La vista principal del dashboard, ubicada en `resources/views/admin/dashboard.blade.php`, se envolvió con la etiqueta del componente para heredar la plantilla:
+    ```blade
+    <x-admin-layout>
+        Hola desde Admin
+    </x-admin-layout>
+    ```
+* **Inyección de Contenido con `slot`**: El contenido específico de cada página (como el texto "Hola desde Admin") se inyecta dinámicamente en la plantilla `admin.blade.php` a través de la variable `{{ $slot }}`, permitiendo que el contenido cambie sin duplicar el código del layout.
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+* **Integración con Vistas Existentes**: Para unificar la apariencia del panel, la vista de perfil de usuario en `resources/views/profile/show.blade.php` fue modificada para usar el nuevo layout, cambiando la etiqueta `<x-app-layout>` por `<x-admin-layout>`.
