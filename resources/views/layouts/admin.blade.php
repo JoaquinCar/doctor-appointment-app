@@ -11,7 +11,9 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://kit.fontawesome.com/d088b7ea21.js" crossorigin="anonymous"></script>
     @livewireStyles
+
 </head>
 <body class="font-sans antialiased bg-pink-50">
 
@@ -31,6 +33,7 @@
     @yield('content')
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
     </body>
 </body>
 </html>
