@@ -11,9 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
-        // Agregando una nueva rutarda
+        // Agregando rutas de administración
         then: function(){
-            Route::middleware('web', 'auth')
+            Route::middleware(['web', 'auth', 'verified'])
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
