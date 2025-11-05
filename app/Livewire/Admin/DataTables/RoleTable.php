@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\DataTables;
 
+use Illuminate\View\View;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\Role;
@@ -26,6 +27,10 @@ class RoleTable extends DataTableComponent
             Column::make("Fecha de Creación", "created_at")
                 ->sortable()
                 ->format(fn($value) => $value->format('d/m/Y H:i')),
+            Column::make("Acciones")
+                ->label(function ($row){
+                    return View('admin.roles.actions',['role'=>$row]);
+                }),
         ];
     }
 }

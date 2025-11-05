@@ -15,6 +15,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -29,9 +30,15 @@
     @include('layouts.includes.admin.sidebar')
 
     <div class="p-4 sm:ml-64">
-        {{-- añadiendo margen superior --}}
-        <div class="mt-14 flex items-center justify-between w-full">
-            @include('layouts.includes.breadcrumb')
+        {{-- añadiendo margen superior para evitar que la barra fija tape el contenido --}}
+        <div class="pt-20 pb-4 flex items-start justify-between">
+            @include('layouts.includes.breadcrumb', ['breadcrumbs' => $breadcrumbs])
+
+            @isset($action)
+                <div class="flex-shrink-0">
+                    {{ $action }}
+                </div>
+            @endisset
         </div>
         {{ $slot }}
     </div>
@@ -43,6 +50,10 @@
 
     <!-- Flowbite -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-
+    @if(@session('swal'))
+        <script>
+            Swal.fire(@json(session('swal')));
+        </script>
+    @endif
 </body>
 </html>
