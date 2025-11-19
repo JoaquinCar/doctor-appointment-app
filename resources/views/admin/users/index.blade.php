@@ -18,4 +18,6 @@
         </x-wire-button>
     </x-slot>
 
+    @livewire('admin.data-tables.user-table')
+
 </x-admin-layout>
