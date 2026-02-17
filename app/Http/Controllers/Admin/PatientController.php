@@ -104,7 +104,22 @@ class PatientController extends Controller
     {
         $patient->load(['user', 'bloodType']);
         $bloodTypes = BloodType::pluck('name', 'id')->toArray();
-        return view('admin.patients.edit', compact('patient', 'bloodTypes'));
+
+        // Determinar qué pestaña abrir al cargar según errores de validación previos
+        $initialTab = 'personal';
+        $sessionErrors = session('errors');
+
+        if ($sessionErrors) {
+            if ($sessionErrors->hasAny(['blood_type_id', 'allergies', 'chronic_conditions', 'surgical_history', 'family_history'])) {
+                $initialTab = 'history';
+            } elseif ($sessionErrors->hasAny(['date_of_birth', 'gender', 'id_number', 'observations'])) {
+                $initialTab = 'general';
+            } elseif ($sessionErrors->hasAny(['emergency_contact_name', 'emergency_contact_phone', 'emergency_relationship'])) {
+                $initialTab = 'emergency';
+            }
+        }
+
+        return view('admin.patients.edit', compact('patient', 'bloodTypes', 'initialTab'));
     }
 
     /**
@@ -112,19 +127,27 @@ class PatientController extends Controller
      */
     public function update(Request $request, Patient $patient)
     {
+        // Limpiar caracteres de máscara del teléfono de emergencia
+        if ($request->has('emergency_contact_phone')) {
+            $request->merge([
+                'emergency_contact_phone' => preg_replace('/[^0-9]/', '', $request->emergency_contact_phone),
+            ]);
+        }
+
         // Validar los datos editables del paciente
         $validated = $request->validate([
             'date_of_birth' => 'required|date|before:today',
             'gender' => 'required|in:male,female,other',
             'id_number' => 'required|string|unique:users,id_number,' . $patient->user_id . '|max:20',
             'blood_type_id' => 'nullable|exists:blood_types,id',
-            'allergies' => 'nullable|string',
-            'chronic_conditions' => 'nullable|string',
-            'surgical_history' => 'nullable|string',
-            'observations' => 'nullable|string',
-            'emergency_contact_name' => 'required|string|max:255',
-            'emergency_contact_phone' => 'required|string|max:20',
-            'emergency_relationship' => 'nullable|string|max:100',
+            'allergies' => 'nullable|string|min:3|max:255',
+            'chronic_conditions' => 'nullable|string|min:3|max:255',
+            'surgical_history' => 'nullable|string|min:3|max:255',
+            'family_history' => 'nullable|string|min:3|max:255',
+            'observations' => 'nullable|string|min:3|max:255',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_relationship' => 'nullable|string|max:50',
+            'emergency_contact_phone' => ['nullable', 'string', 'min:10', 'max:12', 'regex:/^[0-9]+$/'],
         ]);
 
         // Actualizar id_number en el usuario
@@ -140,13 +163,14 @@ class PatientController extends Controller
             'allergies' => $validated['allergies'],
             'chronic_conditions' => $validated['chronic_conditions'],
             'surgical_history' => $validated['surgical_history'],
+            'family_history' => $validated['family_history'],
             'observations' => $validated['observations'],
             'emergency_contact_name' => $validated['emergency_contact_name'],
             'emergency_contact_phone' => $validated['emergency_contact_phone'],
             'emergency_relationship' => $validated['emergency_relationship'],
         ]);
 
-        return redirect()->route('admin.patients.index')
+        return redirect()->route('admin.patients.edit', $patient)
             ->with('swal', [
                 'title' => 'Paciente actualizado',
                 'text' => 'El paciente ha sido actualizado exitosamente.',
