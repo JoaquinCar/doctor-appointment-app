@@ -52,13 +52,13 @@
                         'male' => 'Masculino',
                         'female' => 'Femenino',
                         'other' => 'Otro',
-                    ]" placeholder="Seleccione género" :value="old('gender')">
+                    ]" option-key-value placeholder="Seleccione género" :value="old('gender')">
                     </x-wire-native-select>
                 </div>
 
                 <div class="space-y-1">
                     <x-wire-native-select label="Tipo de sangre" name="blood_type_id" :options="$bloodTypes"
-                    placeholder="Seleccione tipo de sangre" :value="old('blood_type_id')">
+                    option-key-value placeholder="Seleccione tipo de sangre" :value="old('blood_type_id')">
                     </x-wire-native-select>
                 </div>
 

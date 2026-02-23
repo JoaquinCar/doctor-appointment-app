@@ -18,6 +18,7 @@ class Patient extends Model
         'allergies',
         'chronic_conditions',
         'surgical_history',
+        'family_history',
         'observations',
         'emergency_contact_name',
         'emergency_contact_phone',

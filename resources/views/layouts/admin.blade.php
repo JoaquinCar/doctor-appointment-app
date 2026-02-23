@@ -21,6 +21,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://kit.fontawesome.com/9161014f5f.js" crossorigin="anonymous"></script>
 
+    <!-- WireUI Styles -->
+    <wireui:styles />
+
     <!-- Livewire Styles -->
     @livewireStyles
 </head>
@@ -44,6 +47,9 @@
     </div>
 
     @stack('modals')
+
+    <!-- WireUI Scripts -->
+    <wireui:scripts />
 
     <!-- Livewire Scripts -->
     @livewireScripts
