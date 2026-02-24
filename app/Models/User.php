@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -71,8 +72,14 @@ class User extends Authenticatable
     }
 
     //relacion 1:1
-    public function patient()
+    public function patient(): HasOne
     {
         return $this->hasOne(Patient::class);
+    }
+
+    //relacion 1:1
+    public function doctor(): HasOne
+    {
+        return $this->hasOne(Doctor::class);
     }
 }

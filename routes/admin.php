@@ -14,3 +14,6 @@ Route::resource('users',\App\Http\Controllers\Admin\UserController::class);
 
 //gestion de pacientes
 Route::resource('patients',\App\Http\Controllers\Admin\PatientController::class);
+
+//gestion de doctores
+Route::resource('doctors',\App\Http\Controllers\Admin\DoctorController::class);
