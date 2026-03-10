@@ -17,3 +17,10 @@ Route::resource('patients',\App\Http\Controllers\Admin\PatientController::class)
 
 //gestion de doctores
 Route::resource('doctors',\App\Http\Controllers\Admin\DoctorController::class);
+
+//horarios de doctores (accesibles desde el perfil de cada doctor)
+Route::get('doctors/{doctor}/schedules', [\App\Http\Controllers\Admin\DoctorScheduleController::class, 'index'])->name('doctors.schedules');
+Route::put('doctors/{doctor}/schedules', [\App\Http\Controllers\Admin\DoctorScheduleController::class, 'save'])->name('doctors.schedules.save');
+
+//gestion de citas
+Route::resource('appointments',\App\Http\Controllers\Admin\AppointmentController::class);

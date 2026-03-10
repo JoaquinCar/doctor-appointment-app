@@ -293,5 +293,10 @@ return [
         'emergency_relationship'   => 'parentesco',
         'emergency_contact_phone'  => 'teléfono del contacto de emergencia',
         'id_number'                => 'número de identificación',
+
+        // Campos de doctores
+        'speciality_id'            => 'especialidad',
+        'medical_license_number'   => 'número de licencia médica',
+        'biography'                => 'biografía',
     ],
 ];
