@@ -8,12 +8,12 @@
 >
     <div
         x-data="{
-            slot: null,
+            slot: {{ $errors->any() ? json_encode(['doctor_id' => old('doctor_id'), 'date' => old('appointment_date'), 'start' => old('start_time'), 'end' => old('end_time'), 'doctor_name' => '']) : 'null' }},
             setSlot(data) {
                 this.slot = data;
             }
         }"
-        x-on:slot-selected.window="setSlot($event.detail)"
+        x-on:slot-selected.window="setSlot(Array.isArray($event.detail) ? $event.detail[0] : $event.detail)"
     >
         {{-- Buscador de disponibilidad --}}
         @livewire('admin.availability-search')
@@ -27,14 +27,23 @@
                     <span x-text="slot ? slot.doctor_name + ' — ' + slot.date + ' de ' + slot.start + ' a ' + slot.end : ''"></span>
                 </div>
 
-                <form action="{{ route('admin.appointments.store') }}" method="POST">
+                <form action="{{ route('admin.appointments.store') }}" method="POST"
+                    @submit="
+                        if (slot && typeof slot === 'object') {
+                            $refs.fDoctorId.value = slot.doctor_id;
+                            $refs.fDate.value     = slot.date;
+                            $refs.fStart.value    = slot.start;
+                            $refs.fEnd.value      = slot.end;
+                        }
+                    "
+                >
                     @csrf
 
                     {{-- Campos ocultos que llegan del slot --}}
-                    <input type="hidden" name="doctor_id"        x-bind:value="slot ? slot.doctor_id : ''">
-                    <input type="hidden" name="appointment_date" x-bind:value="slot ? slot.date : ''">
-                    <input type="hidden" name="start_time"       x-bind:value="slot ? slot.start : ''">
-                    <input type="hidden" name="end_time"         x-bind:value="slot ? slot.end : ''">
+                    <input type="hidden" name="doctor_id"        x-ref="fDoctorId" value="{{ old('doctor_id') }}">
+                    <input type="hidden" name="appointment_date" x-ref="fDate"     value="{{ old('appointment_date') }}">
+                    <input type="hidden" name="start_time"       x-ref="fStart"    value="{{ old('start_time') }}">
+                    <input type="hidden" name="end_time"         x-ref="fEnd"      value="{{ old('end_time') }}">
 
                     <div class="grid sm:grid-cols-2 gap-4">
                         {{-- Paciente --}}

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendAppointmentConfirmation;
 use App\Models\Appointment;
 use App\Models\DoctorSchedule;
 use App\Models\Patient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AppointmentController extends Controller
 {
@@ -28,6 +30,10 @@ class AppointmentController extends Controller
 
     public function store(Request $request)
     {
+        Log::info('Appointment store attempt', $request->only([
+            'doctor_id', 'patient_id', 'appointment_date', 'start_time', 'end_time', 'reason'
+        ]));
+
         $validated = $request->validate([
             'doctor_id'        => ['required', 'exists:doctors,id'],
             'patient_id'       => ['required', 'exists:patients,id'],
@@ -55,7 +61,7 @@ class AppointmentController extends Controller
                 ->withInput();
         }
 
-        Appointment::create([
+        $appointment = Appointment::create([
             'doctor_id'        => $validated['doctor_id'],
             'patient_id'       => $validated['patient_id'],
             'appointment_date' => $validated['appointment_date'],
@@ -64,6 +70,15 @@ class AppointmentController extends Controller
             'reason'           => $validated['reason'],
             'status'           => 'scheduled',
         ]);
+
+        try {
+            SendAppointmentConfirmation::dispatch($appointment->id);
+        } catch (\Throwable $e) {
+            Log::error('Failed to dispatch WhatsApp confirmation', [
+                'appointment_id' => $appointment->id,
+                'error'          => $e->getMessage(),
+            ]);
+        }
 
         return redirect()->route('admin.appointments.index')->with('swal', [
             'title' => 'Cita registrada',
