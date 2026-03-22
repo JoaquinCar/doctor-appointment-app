@@ -21,15 +21,18 @@ test('registration screen cannot be rendered if support is disabled', function (
 
 test('new users can register', function () {
     $response = $this->post('/register', [
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => 'password',
+        'name'                  => 'Test User',
+        'email'                 => 'test@example.com',
+        'password'              => 'password',
         'password_confirmation' => 'password',
-        'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature(),
+        'terms'                 => Jetstream::hasTermsAndPrivacyPolicyFeature(),
+        'id_number'             => '12345678',
+        'phone'                 => '5551234567',
+        'address'               => 'Calle Prueba 123',
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('admin.dashboard', absolute: false));
 })->skip(function () {
     return ! Features::enabled(Features::registration());
 }, 'Registration support is not enabled.');
