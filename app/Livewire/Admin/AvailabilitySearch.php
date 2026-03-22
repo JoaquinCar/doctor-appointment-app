@@ -88,13 +88,13 @@ class AvailabilitySearch extends Component
         $this->selectedEnd        = $end;
         $this->slotSelected       = true;
 
-        $this->dispatch('slot-selected', [
-            'doctor_id'   => $doctorId,
-            'doctor_name' => $doctorName,
-            'date'        => $this->date,
-            'start'       => substr($start, 0, 5),
-            'end'         => substr($end, 0, 5),
-        ]);
+        $this->dispatch('slot-selected',
+            doctor_id:   $doctorId,
+            doctor_name: $doctorName,
+            date:        $this->date,
+            start:       substr($start, 0, 5),
+            end:         substr($end, 0, 5),
+        );
     }
 
     public function render()
