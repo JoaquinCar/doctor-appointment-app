@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\SendAppointmentConfirmation;
+use App\Jobs\SendAppointmentConfirmationEmail;
 use App\Models\Appointment;
 use App\Models\DoctorSchedule;
 use App\Models\Patient;
@@ -75,6 +76,15 @@ class AppointmentController extends Controller
             SendAppointmentConfirmation::dispatch($appointment->id);
         } catch (\Throwable $e) {
             Log::error('Failed to dispatch WhatsApp confirmation', [
+                'appointment_id' => $appointment->id,
+                'error'          => $e->getMessage(),
+            ]);
+        }
+
+        try {
+            SendAppointmentConfirmationEmail::dispatch($appointment->id);
+        } catch (\Throwable $e) {
+            Log::error('Failed to dispatch email confirmation', [
                 'appointment_id' => $appointment->id,
                 'error'          => $e->getMessage(),
             ]);
